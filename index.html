@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive HTML Index Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        .add-section {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border: 2px solid #dee2e6;
+        }
+
+        .add-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .links-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #dee2e6;
+        }
+
+        .links-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .link-card {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #dee2e6;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .link-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .link-card a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .link-card a:hover {
+            text-decoration: underline;
+        }
+
+        .link-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 120px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .export-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .export-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📁 HTML Index Manager</h1>
+            <p>Organize and manage your HTML files with an interactive navigation system</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="totalLinks">0</h3>
+                <p>Total Links</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="lastAdded">Never</h3>
+                <p>Last Added</p>
+            </div>
+        </div>
+
+        <div class="add-section">
+            <h2>➕ Add New HTML File</h2>
+            <form id="addLinkForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="linkName">Link Name:</label>
+                        <input type="text" id="linkName" name="linkName" placeholder="e.g., My Awesome Project" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fileName">File Path:</label>
+                        <input type="text" id="fileName" name="fileName" placeholder="e.g., projects/awesome-project.html" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description (Optional):</label>
+                    <input type="text" id="description" name="description" placeholder="Brief description of the HTML file">
+                </div>
+                <button type="submit" class="btn">Add Link</button>
+            </form>
+        </div>
+
+        <div class="links-section">
+            <h2>🔗 Your HTML Files</h2>
+            <div id="linksContainer">
+                <div class="empty-state">
+                    <div class="icon">📂</div>
+                    <h3>No HTML files added yet</h3>
+                    <p>Use the form above to add your first HTML file link</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <h3>📤 Export Options</h3>
+            <div class="export-buttons">
+                <button class="btn" onclick="exportAsJSON()">Export as JSON</button>
+                <button class="btn" onclick="exportAsHTML()">Export as HTML</button>
+                <button class="btn btn-danger" onclick="clearAllLinks()">Clear All Links</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let htmlLinks = [];
+
+        // Load links from memory on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize with some sample data for demonstration
+            const sampleLinks = [
+                {
+                    id: 1,
+                    name: "Sample Project",
+                    file: "sample-project.html",
+                    description: "A sample HTML project file",
+                    dateAdded: new Date().toISOString()
+                }
+            ];
+            
+            htmlLinks = sampleLinks;
+            updateDisplay();
+        });
+
+        // Handle form submission
+        document.getElementById('addLinkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const linkName = document.getElementById('linkName').value.trim();
+            const fileName = document.getElementById('fileName').value.trim();
+            const description = document.getElementById('description').value.trim();
+            
+            if (!linkName || !fileName) {
+                alert('Please fill in both link name and file path!');
+                return;
+            }
+            
+            // Check if file already exists
+            if (htmlLinks.some(link => link.file === fileName)) {
+                alert('This file path already exists!');
+                return;
+            }
+            
+            // Add new link
+            const newLink = {
+                id: Date.now(),
+                name: linkName,
+                file: fileName,
+                description: description || '',
+                dateAdded: new Date().toISOString()
+            };
+            
+            htmlLinks.push(newLink);
+            updateDisplay();
+            
+            // Clear form
+            document.getElementById('addLinkForm').reset();
+            
+            // Success feedback
+            showNotification('HTML file link added successfully!');
+        });
+
+        function updateDisplay() {
+            const container = document.getElementById('linksContainer');
+            
+            if (htmlLinks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📂</div>
+                        <h3>No HTML files added yet</h3>
+                        <p>Use the form above to add your first HTML file link</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="links-grid">
+                        ${htmlLinks.map(link => `
+                            <div class="link-card">
+                                <h3>${escapeHtml(link.name)}</h3>
+                                <a href="${escapeHtml(link.file)}" target="_blank">${escapeHtml(link.file)}</a>
+                                ${link.description ? `<p style="margin-top: 10px; color: #7f8c8d; font-size: 0.9rem;">${escapeHtml(link.description)}</p>` : ''}
+                                <p style="margin-top: 10px; color: #adb5bd; font-size: 0.8rem;">Added: ${new Date(link.dateAdded).toLocaleDateString()}</p>
+                                <div class="link-actions">
+                                    <button class="btn btn-small" onclick="editLink(${link.id})">Edit</button>
+                                    <button class="btn btn-small btn-danger" onclick="deleteLink(${link.id})">Delete</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalLinks').textContent = htmlLinks.length;
+            
+            if (htmlLinks.length > 0) {
+                const lastAdded = htmlLinks.reduce((latest, link) => 
+                    new Date(link.dateAdded) > new Date(latest.dateAdded) ? link : latest
+                );
+                document.getElementById('lastAdded').textContent = new Date(lastAdded.dateAdded).toLocaleDateString();
+            } else {
+                document.getElementById('lastAdded').textContent = 'Never';
+            }
+        }
+
+        function editLink(id) {
+            const link = htmlLinks.find(l => l.id === id);
+            if (!link) return;
+            
+            const newName = prompt('Enter new link name:', link.name);
+            if (newName === null) return;
+            
+            const newFile = prompt('Enter new file path:', link.file);
+            if (newFile === null) return;
+            
+            const newDescription = prompt('Enter new description:', link.description);
+            if (newDescription === null) return;
+            
+            if (!newName.trim() || !newFile.trim()) {
+                alert('Name and file path cannot be empty!');
+                return;
+            }
+            
+            // Check if new file path conflicts with existing ones (excluding current)
+            if (htmlLinks.some(l => l.id !== id && l.file === newFile.trim())) {
+                alert('This file path already exists!');
+                return;
+            }
+            
+            link.name = newName.trim();
+            link.file = newFile.trim();
+            link.description = newDescription.trim();
+            
+            updateDisplay();
+            showNotification('Link updated successfully!');
+        }
+
+        function deleteLink(id) {
+            if (confirm('Are you sure you want to delete this link?')) {
+                htmlLinks = htmlLinks.filter(l => l.id !== id);
+                updateDisplay();
+                showNotification('Link deleted successfully!');
+            }
+        }
+
+        function exportAsJSON() {
+            const dataStr = JSON.stringify(htmlLinks, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'html-links.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function exportAsHTML() {
+            const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Files Index</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; }
+        h1 { color: #333; text-align: center; }
+        .link-item { margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 5px; }
+        .link-item h3 { margin: 0 0 10px 0; color: #2c3e50; }
+        .link-item a { color: #3498db; text-decoration: none; }
+        .link-item a:hover { text-decoration: underline; }
+        .description { color: #7f8c8d; font-size: 0.9rem; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTML Files Index</h1>
+        <p>Generated on ${new Date().toLocaleDateString()}</p>
+        ${htmlLinks.map(link => `
+            <div class="link-item">
+                <h3>${escapeHtml(link.name)}</h3>
+                <a href="${escapeHtml(link.file)}">${escapeHtml(link.file)}</a>
+                ${link.description ? `<div class="description">${escapeHtml(link.description)}</div>` : ''}
+            </div>
+        `).join('')}
+    </div>
+</body>
+</html>`;
+            
+            const dataUri = 'data:text/html;charset=utf-8,'+ encodeURIComponent(htmlContent);
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', 'index.html');
+            linkElement.click();
+        }
+
+        function clearAllLinks() {
+            if (confirm('Are you sure you want to delete all links? This action cannot be undone.')) {
+                htmlLinks = [];
+                updateDisplay();
+                showNotification('All links cleared!');
+            }
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        function showNotification(message) {
+            // Simple notification system
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #27ae60;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
